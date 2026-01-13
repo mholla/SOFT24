@@ -8,18 +8,18 @@ if __name__ == '__main__':
 
     # ======================================================
     # dimensions of the model
-    Length = 80.0 #mm
-    Height = 40.0 #mm
-    Cortex_thickness = 2.0 #mm
+    Length = 0.080 #m
+    Height = 0.040 #m
+    Cortex_thickness = 0.002 #m
     Dimensions = [Length,Height,Cortex_thickness]
 
     # ======================================================
     # material properties
-    mu_cortex = 100.0 #kPa
-    lame_cortex= 9.3*mu_cortex #kPa
+    mu_cortex = 100.0 #Pa
+    lame_cortex= 9.3*mu_cortex #Pa
     stiffness_ratio = 3 
-    mu_subcortex = stiffness_ratio*mu_cortex #kPa
-    lame_subcortex = 9.3*mu_subcortex #kPa
+    mu_subcortex = stiffness_ratio*mu_cortex #Pa
+    lame_subcortex = 9.3*mu_subcortex #Pa
     growth_rate = 0.05 
     Materials = [mu_cortex,lame_cortex,mu_subcortex,lame_subcortex,growth_rate]
 
@@ -38,20 +38,20 @@ if __name__ == '__main__':
     num = 10 
     tangent_min = 0.5 
     tangent_max = 5 
-    span_min = 16 #mm
-    span_max = 25 #mm
+    span_min = 0.016 #m
+    span_max = 0.025 #m
     [a_coeffs_array,b_coeffs_array] = Compute_parabola_coeffs(num,tangent_min,tangent_max,span_min,span_max)
-    m_coeff = 0 #mm
+    m_coeff = 0 #m
 
     # only primary axon tract
     curve_num = 1 
 
     # axon tract stiffness  
     Axon_tract_stiffness = 150 #N/m
-    InfluenceRadius = 1.0 #mm
+    InfluenceRadius = 0.001 #m
 
     # parameters that control the segments
-    Geometric_length = 0.130 #mm
+    Geometric_length = 0.00013 #m
     Stretch_ratio = 2 
     Axon_tract_property = [Geometric_length,Stretch_ratio]
 
@@ -106,4 +106,5 @@ if __name__ == '__main__':
     
     # ==============================================================
     # write data to the .csv file for plotting
+
     np.savetxt("psi_array_geometry.csv", psi_array, delimiter=",")
