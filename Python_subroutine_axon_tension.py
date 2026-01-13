@@ -340,17 +340,17 @@ def Create_Mesh(ModelName, PartName, Dimensions):
     p.setElementType(regions=(domain, ), elemTypes=(elemType1, elemType2))
 
     top_edge = p.edges.findAt(((-Length/4, -Height/40, 0.0), ), ((Length/2, -Height/40, 0.0), ), ((Length/4, 0.0, 0.0), ), ((-Length/2, -Height/160, 0.0), ))
-    p.seedEdgeBySize(edges=top_edge, size=0.5, deviationFactor=0.1, minSizeFactor=0.1, constraint=FINER)
+    p.seedEdgeBySize(edges=top_edge, size=0.5/1000, deviationFactor=0.1, minSizeFactor=0.1, constraint=FINER)
 
     interface_edge = p.edges.findAt(((-Length/4, -Height/40, 0.0), ), ((-Length/2, -Height/30, 0.0), ), ((-Length/4, -Height/20, 0.0), ), ((Length/2, -Height/25, 0.0), ))
-    p.seedEdgeBySize(edges=interface_edge, size=0.5, deviationFactor=0.1, minSizeFactor=0.1, constraint=FINER)
+    p.seedEdgeBySize(edges=interface_edge, size=0.5/1000, deviationFactor=0.1, minSizeFactor=0.1, constraint=FINER)
 
     left_edge = p.edges.findAt(((-Length/2, -Height/4, 0.0), ))
     right_edge = p.edges.findAt(((Length/2, -Height/4, 0.0), ))
-    p.seedEdgeByBias(biasMethod=SINGLE, end1Edges=left_edge, end2Edges=right_edge, minSize=0.5, maxSize=6.0, constraint=FINER)
+    p.seedEdgeByBias(biasMethod=SINGLE, end1Edges=left_edge, end2Edges=right_edge, minSize=0.5/1000, maxSize=6.0/1000, constraint=FINER)
 
     bottom_edge = p.edges.findAt(((-Length/4, -Height, 0.0), ))
-    p.seedEdgeByBias(biasMethod=DOUBLE, centerEdges=bottom_edge, minSize=0.4, maxSize=12.0, constraint=FINER)
+    p.seedEdgeByBias(biasMethod=DOUBLE, centerEdges=bottom_edge, minSize=0.4/1000, maxSize=12.0/1000, constraint=FINER)
     p.generateMesh()
 
 
@@ -386,7 +386,7 @@ def Create_Axon_Connection(a_coeff,b_coeff,m_coeff,curve_num,ModelName,InstanceN
 
     # Generate original coordinates with the given parabola coefficients
     num = 200
-    xmax = np.abs(np.sqrt((-2-b_coeff)/a_coeff))
+    xmax = np.abs(np.sqrt((-2/1000-b_coeff)/a_coeff))
 
     # curve_num = 1 means the primary axon tract on the middle
     # curve_num = 2 means the secondary axon tract on the right
@@ -551,8 +551,8 @@ def Compute_parabola_coeffs(num,tangent_min,tangent_max,span_min,span_max):
     # Calculate the coefficient: a and b
     for i in range(num):
         for j in range(num):
-            eq1 = 2 * sp.sqrt(x) * sp.sqrt(-2 - y) - tangent[i]
-            eq2 = sp.sqrt((-2 - y) / x) - span_half[j]
+            eq1 = 2 * sp.sqrt(x) * sp.sqrt(-2/1000 - y) - tangent[i]
+            eq2 = sp.sqrt((-2/1000 - y) / x) - span_half[j]
             sol = sp.solve((eq1, eq2), (x, y))
 
             a_array[j,i] =  np.array(sol)[0,0]
@@ -873,5 +873,6 @@ def Calculate_wiring_length(ODB_Name,NodeSetName,FrameNumber):
 
     # Calculate the total length
     length = np.sum(np.sqrt(np.square(x_coords_diff)+np.square(y_coords_diff)))
+
 
     return length
