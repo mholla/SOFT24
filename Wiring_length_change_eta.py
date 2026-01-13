@@ -8,18 +8,18 @@ if __name__ == '__main__':
 
     # ======================================================
     # dimensions of the model
-    Length = 80.0 #mm
-    Height = 40.0 #mm
-    Cortex_thickness = 2.0 #mm
+    Length = 0.080 #m
+    Height = 0.040 #m
+    Cortex_thickness = 0.002 #m
     Dimensions = [Length,Height,Cortex_thickness]
 
     # ======================================================
     # material properties; note the stiffness ratio is changed to 5 here
-    mu_cortex = 100.0 #kPa
-    lame_cortex= 9.3*mu_cortex #kPa
+    mu_cortex = 100.0 #Pa
+    lame_cortex= 9.3*mu_cortex #Pa
     stiffness_ratio = 5 
-    mu_subcortex = stiffness_ratio*mu_cortex #kPa
-    lame_subcortex = 9.3*mu_subcortex #kPa
+    mu_subcortex = stiffness_ratio*mu_cortex #Pa
+    lame_subcortex = 9.3*mu_subcortex #Pa
     growth_rate = 0.05 
     Materials = [mu_cortex,lame_cortex,mu_subcortex,lame_subcortex,growth_rate]
 
@@ -37,9 +37,9 @@ if __name__ == '__main__':
 
     # ======================================================
     # axon tract parabola shape parameters
-    a_coeff = 1./30
-    b_coeff = -7
-    m_coeff = 0
+    a_coeff = 1./30.*1000 #/m
+    b_coeff = -7./1000 #m
+    m_coeff = 0 #m
 
     # axon tract numbers
     curve_num1 = 1
@@ -47,9 +47,9 @@ if __name__ == '__main__':
     curve_num3 = 3
 
     # parameters that control the segments
-    Geometric_length = 0.130 #mm
+    Geometric_length = 0.00013 #m
     Stretch_ratio = 2
-    InfluenceRadius = 1.0 #mm
+    InfluenceRadius = 0.001 #m
     Axon_tract_property = [Geometric_length,Stretch_ratio]
 
     # ======================================================
@@ -117,4 +117,5 @@ if __name__ == '__main__':
         with open(secondary_wiring_length_name, 'wb') as f:
             np.save(f, length_t_secondary)
         with open(total_wiring_length_name, 'wb') as f:
+
             np.save(f, total_length_t)
