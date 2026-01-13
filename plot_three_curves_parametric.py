@@ -16,7 +16,7 @@ def heat_map(csv_file):
     # specify primary and secondary axon tracts stiffness
     data.columns = [10,120,230,340,450,560,670,780,890,1000]
     data.index = [1000,890,780,670,560,450,340,230,120,10]
-    g = sns.heatmap(data, cmap='Blues', square=True, linewidths=1, linecolor='white', 
+    g = sns.heatmap(data*1000, cmap='Blues', square=True, linewidths=1, linecolor='white', 
                     cbar_kws ={'label': 'mean squared displacement $\psi$ [mm]','location': 'bottom','shrink':0.51,'ticks': [0.0,0.4,0.8,1.2,1.6]} )
     
     # axes
@@ -44,5 +44,6 @@ if __name__ == '__main__':
 
     rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
     rc('text', usetex=True)
+
 
     heat_map("psi_array_three_curves.csv")
