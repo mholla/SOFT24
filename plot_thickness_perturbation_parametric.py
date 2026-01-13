@@ -18,7 +18,7 @@ def heat_map(csv_file):
     data.columns = [10,20,30,40,50,60,70,80,90,100]
     
     # plot heatmap
-    g = sns.heatmap(data, cmap='Blues', square=True, linewidths=1, linecolor='white', 
+    g = sns.heatmap(data*1000, cmap='Blues', square=True, linewidths=1, linecolor='white', 
                     cbar_kws ={'label': 'mean squared displacement $\psi$ [mm]','location': 'bottom','shrink':0.51,'ticks': [0,0.5,1.0,1.5,2,2.5]} )
     
     # axes
@@ -45,5 +45,6 @@ if __name__ == '__main__':
 
     rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
     rc('text', usetex=True)
+
 
     heat_map("psi_array_perturbation.csv")
