@@ -18,7 +18,7 @@ def heat_map(csv_file):
     data.columns = [0.5,1,1.5,2,2.5,3,3.5,4,4.5,5]
 
     # plot heatmap
-    g = sns.heatmap(data*1000, cmap='Blues', square=True, linewidths=1, linecolor='white', 
+    g = sns.heatmap(data, cmap='Blues', square=True, linewidths=1, linecolor='white', 
                     cbar_kws ={'label': 'mean squared displacement $\psi$ [mm]','location': 'bottom','shrink':0.5,'ticks': [0,0.5,1.0,1.5,2,2.5]})
 
     # axes
