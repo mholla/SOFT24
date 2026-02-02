@@ -10,7 +10,7 @@ if __name__ == '__main__':
     # dimensions of the model
     Length = 0.080 #m
     Height = 0.040 #m
-    Cortex_thickness = 0.002 #m
+    Cortex_thickness = 0.002 #m 
     Dimensions = [Length,Height,Cortex_thickness]
 
     # ======================================================
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     span_min = 0.016 #m
     span_max = 0.025 #m
     [a_coeffs_array,b_coeffs_array] = Compute_parabola_coeffs(num,tangent_min,tangent_max,span_min,span_max)
-    m_coeff = 0 #m
+    m_coeff = 0 #mm
 
     # only primary axon tract
     curve_num = 1 
@@ -64,7 +64,7 @@ if __name__ == '__main__':
 
     for i in range(0,num):
         for j in range(0,num):
-
+            
             ModelName = 'Model-span%d-tangent%d' %(i,j) 
             JobName = 'Job-span%d-tangent%d' %(i,j)
 
@@ -74,7 +74,7 @@ if __name__ == '__main__':
             # This is a special case that the axon tract is close to the bottom of the model, where the biased mesh is too sparse to apply the coupling constrain. 
             # We increase the influence radius to apply the coupling and it doesn't affect the folding morphology
             if ((i == 9) and (j == 9)):
-                InfluenceRadius = 1.5
+                InfluenceRadius = 0.0015 #m
 
             Create_Bilayered_Rectangle(ModelName, PartName, Dimensions)
             Create_Material(ModelName,Materials)
@@ -106,5 +106,4 @@ if __name__ == '__main__':
     
     # ==============================================================
     # write data to the .csv file for plotting
-
     np.savetxt("psi_array_geometry.csv", psi_array, delimiter=",")

@@ -58,7 +58,7 @@ def Create_Bilayered_Rectangle(ModelName, PartName, Dimensions):
 
     # Define the model and modeltype
     mdb.Model(name=ModelName, modelType=STANDARD_EXPLICIT)   
-    s = mdb.models[ModelName].ConstrainedSketch(name='__profile__', sheetSize=100.0)
+    s = mdb.models[ModelName].ConstrainedSketch(name='__profile__', sheetSize=0.1) # convert to meter unit 
     g, v, d, c = s.geometry, s.vertices, s.dimensions, s.constraints
     s.setPrimaryObject(option=STANDALONE)
 
@@ -72,7 +72,7 @@ def Create_Bilayered_Rectangle(ModelName, PartName, Dimensions):
     # Partition rectangle into two layers: the first layer as the cortex layer and the second layer as the subcortex layer
     f, e, d = p.faces, p.edges, p.datums
     t = p.MakeSketchTransform(sketchPlane=f.findAt(coordinates=(Length/8, -Height/4, 0.0), normal=(0.0, 0.0, 1.0)), sketchPlaneSide=SIDE1, origin=(0.0, -Height/2, 0.0))
-    s = mdb.models[ModelName].ConstrainedSketch(name='__profile__', sheetSize=100.0, gridSpacing=4, transform=t)
+    s = mdb.models[ModelName].ConstrainedSketch(name='__profile__', sheetSize=0.1, gridSpacing=4, transform=t) # convert to meter unit
     g, v, d1, c = s.geometry, s.vertices, s.dimensions, s.constraints
     s.setPrimaryObject(option=SUPERIMPOSE)
     p.projectReferencesOntoSketch(sketch=s, filter=COPLANAR_EDGES)
@@ -277,10 +277,15 @@ def Create_Contact(ModelName, Step):
     a = mdb.models[ModelName].rootAssembly
     region1=a.surfaces['Surf-top']
     region2=a.surfaces['Surf-top']
+
     mdb.models[ModelName].SurfaceToSurfaceContactStd(name='Int-1', 
         createStepName=Step, main=region1, secondary=region2, sliding=FINITE, 
         thickness=ON, interactionProperty='IntProp-1', adjustMethod=NONE, 
         initialClearance=OMIT, datumAxis=None, clearanceRegion=None)
+    # mdb.models[ModelName].SurfaceToSurfaceContactStd(name='Int-1', 
+    #     createStepName=Step, master=region1, slave=region2, sliding=FINITE, 
+    #     thickness=ON, interactionProperty='IntProp-1', adjustMethod=NONE, 
+    #     initialClearance=OMIT, datumAxis=None, clearanceRegion=None)
 
 
 def Create_Boundary_Conditions(ModelName, Step):
@@ -340,17 +345,17 @@ def Create_Mesh(ModelName, PartName, Dimensions):
     p.setElementType(regions=(domain, ), elemTypes=(elemType1, elemType2))
 
     top_edge = p.edges.findAt(((-Length/4, -Height/40, 0.0), ), ((Length/2, -Height/40, 0.0), ), ((Length/4, 0.0, 0.0), ), ((-Length/2, -Height/160, 0.0), ))
-    p.seedEdgeBySize(edges=top_edge, size=0.5/1000, deviationFactor=0.1, minSizeFactor=0.1, constraint=FINER)
+    p.seedEdgeBySize(edges=top_edge, size=0.5/1000, deviationFactor=0.1, minSizeFactor=0.1, constraint=FINER) # convert to meter unit divide by 1000
 
     interface_edge = p.edges.findAt(((-Length/4, -Height/40, 0.0), ), ((-Length/2, -Height/30, 0.0), ), ((-Length/4, -Height/20, 0.0), ), ((Length/2, -Height/25, 0.0), ))
-    p.seedEdgeBySize(edges=interface_edge, size=0.5/1000, deviationFactor=0.1, minSizeFactor=0.1, constraint=FINER)
+    p.seedEdgeBySize(edges=interface_edge, size=0.5/1000, deviationFactor=0.1, minSizeFactor=0.1, constraint=FINER) # convert to meter unit divide by 1000
 
     left_edge = p.edges.findAt(((-Length/2, -Height/4, 0.0), ))
     right_edge = p.edges.findAt(((Length/2, -Height/4, 0.0), ))
-    p.seedEdgeByBias(biasMethod=SINGLE, end1Edges=left_edge, end2Edges=right_edge, minSize=0.5/1000, maxSize=6.0/1000, constraint=FINER)
+    p.seedEdgeByBias(biasMethod=SINGLE, end1Edges=left_edge, end2Edges=right_edge, minSize=0.5/1000, maxSize=6.0/1000, constraint=FINER) # convert to meter unit divide by 1000
 
     bottom_edge = p.edges.findAt(((-Length/4, -Height, 0.0), ))
-    p.seedEdgeByBias(biasMethod=DOUBLE, centerEdges=bottom_edge, minSize=0.4/1000, maxSize=12.0/1000, constraint=FINER)
+    p.seedEdgeByBias(biasMethod=DOUBLE, centerEdges=bottom_edge, minSize=0.4/1000, maxSize=12.0/1000, constraint=FINER) # convert to meter unit divide by 1000
     p.generateMesh()
 
 
@@ -386,7 +391,7 @@ def Create_Axon_Connection(a_coeff,b_coeff,m_coeff,curve_num,ModelName,InstanceN
 
     # Generate original coordinates with the given parabola coefficients
     num = 200
-    xmax = np.abs(np.sqrt((-2/1000-b_coeff)/a_coeff))
+    xmax = np.abs(np.sqrt((-0.002-b_coeff)/a_coeff)) # convert to meter unit 
 
     # curve_num = 1 means the primary axon tract on the middle
     # curve_num = 2 means the secondary axon tract on the right
@@ -551,8 +556,8 @@ def Compute_parabola_coeffs(num,tangent_min,tangent_max,span_min,span_max):
     # Calculate the coefficient: a and b
     for i in range(num):
         for j in range(num):
-            eq1 = 2 * sp.sqrt(x) * sp.sqrt(-2/1000 - y) - tangent[i]
-            eq2 = sp.sqrt((-2/1000 - y) / x) - span_half[j]
+            eq1 = 2 * sp.sqrt(x) * sp.sqrt(-0.002 - y) - tangent[i]  # convert to meter unit 
+            eq2 = sp.sqrt((-0.002 - y) / x) - span_half[j]  # convert to meter unit 
             sol = sp.solve((eq1, eq2), (x, y))
 
             a_array[j,i] =  np.array(sol)[0,0]
@@ -702,7 +707,7 @@ def Create_Job(ModelName, JobName, USERSUB):
         mdb.jobs[JobName].submit(consistencyChecking=OFF)
         mdb.jobs[JobName].waitForCompletion()
     except: 
-        print "Job %s crashed" % JobName
+        print("Job %s crashed" % JobName)
 
 
 def Post_processing_odbs(ODB_Name,NodesetName,Step,Variable):
@@ -873,6 +878,5 @@ def Calculate_wiring_length(ODB_Name,NodeSetName,FrameNumber):
 
     # Calculate the total length
     length = np.sum(np.sqrt(np.square(x_coords_diff)+np.square(y_coords_diff)))
-
 
     return length
