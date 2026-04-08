@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 from PIL import Image
 from io import BytesIO
+
 mpl.rcParams.update(mpl.rcParamsDefault)
 plt.rcParams["font.family"] = "Times New Roman"
 
@@ -40,8 +41,15 @@ if __name__ == '__main__':
     plt.plot(betas, eps_10, color=color_10, marker='o', linestyle='')
     plt.plot(betas, eps_150, color=color_150, marker='o', linestyle='')
     plt.plot(betas, eps_300, color=color_300, marker='o', linestyle='')
+    
+    K_SI = [10, 150, 300]
+    plt.legend([
+        'theoretical',
+        r'$K = %d\ \mathrm{N/m}^{2}$' % K_SI[0],
+        r'$K = %d\ \mathrm{N/m}^{2}$' % K_SI[1],
+        r'$K = %d\ \mathrm{N/m}^{2}$' % K_SI[2],
+    ])
 
-    plt.legend(['theoretical', r'$K = 10$ \rm  N/m', r'$K = 150$ \rm  N/m', r'$K = 300$ \rm  N/m'])
     plt.rcParams['figure.dpi'] = 500
     plt.rcParams['savefig.dpi'] = 500
 

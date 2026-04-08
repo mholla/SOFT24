@@ -58,7 +58,7 @@ def Create_Bilayered_Rectangle(ModelName, PartName, Dimensions):
 
     # Define the model and modeltype
     mdb.Model(name=ModelName, modelType=STANDARD_EXPLICIT)   
-    s = mdb.models[ModelName].ConstrainedSketch(name='__profile__', sheetSize=0.1) # convert to meter unit 
+    s = mdb.models[ModelName].ConstrainedSketch(name='__profile__', sheetSize=100.0)
     g, v, d, c = s.geometry, s.vertices, s.dimensions, s.constraints
     s.setPrimaryObject(option=STANDALONE)
 
@@ -72,7 +72,7 @@ def Create_Bilayered_Rectangle(ModelName, PartName, Dimensions):
     # Partition rectangle into two layers: the first layer as the cortex layer and the second layer as the subcortex layer
     f, e, d = p.faces, p.edges, p.datums
     t = p.MakeSketchTransform(sketchPlane=f.findAt(coordinates=(Length/8, -Height/4, 0.0), normal=(0.0, 0.0, 1.0)), sketchPlaneSide=SIDE1, origin=(0.0, -Height/2, 0.0))
-    s = mdb.models[ModelName].ConstrainedSketch(name='__profile__', sheetSize=0.1, gridSpacing=4, transform=t) # convert to meter unit
+    s = mdb.models[ModelName].ConstrainedSketch(name='__profile__', sheetSize=100.0, gridSpacing=4, transform=t)
     g, v, d1, c = s.geometry, s.vertices, s.dimensions, s.constraints
     s.setPrimaryObject(option=SUPERIMPOSE)
     p.projectReferencesOntoSketch(sketch=s, filter=COPLANAR_EDGES)
@@ -277,15 +277,10 @@ def Create_Contact(ModelName, Step):
     a = mdb.models[ModelName].rootAssembly
     region1=a.surfaces['Surf-top']
     region2=a.surfaces['Surf-top']
-
     mdb.models[ModelName].SurfaceToSurfaceContactStd(name='Int-1', 
         createStepName=Step, main=region1, secondary=region2, sliding=FINITE, 
         thickness=ON, interactionProperty='IntProp-1', adjustMethod=NONE, 
         initialClearance=OMIT, datumAxis=None, clearanceRegion=None)
-    # mdb.models[ModelName].SurfaceToSurfaceContactStd(name='Int-1', 
-    #     createStepName=Step, master=region1, slave=region2, sliding=FINITE, 
-    #     thickness=ON, interactionProperty='IntProp-1', adjustMethod=NONE, 
-    #     initialClearance=OMIT, datumAxis=None, clearanceRegion=None)
 
 
 def Create_Boundary_Conditions(ModelName, Step):
@@ -295,7 +290,7 @@ def Create_Boundary_Conditions(ModelName, Step):
     Parameters
     ----------
     ModelName : string 
-        name of the model to be modified
+        determines what model should be modified
     Step : string
         name of step to create BC in
     
@@ -345,17 +340,17 @@ def Create_Mesh(ModelName, PartName, Dimensions):
     p.setElementType(regions=(domain, ), elemTypes=(elemType1, elemType2))
 
     top_edge = p.edges.findAt(((-Length/4, -Height/40, 0.0), ), ((Length/2, -Height/40, 0.0), ), ((Length/4, 0.0, 0.0), ), ((-Length/2, -Height/160, 0.0), ))
-    p.seedEdgeBySize(edges=top_edge, size=0.5/1000, deviationFactor=0.1, minSizeFactor=0.1, constraint=FINER) # convert to meter unit divide by 1000
+    p.seedEdgeBySize(edges=top_edge, size=0.5, deviationFactor=0.1, minSizeFactor=0.1, constraint=FINER)
 
     interface_edge = p.edges.findAt(((-Length/4, -Height/40, 0.0), ), ((-Length/2, -Height/30, 0.0), ), ((-Length/4, -Height/20, 0.0), ), ((Length/2, -Height/25, 0.0), ))
-    p.seedEdgeBySize(edges=interface_edge, size=0.5/1000, deviationFactor=0.1, minSizeFactor=0.1, constraint=FINER) # convert to meter unit divide by 1000
+    p.seedEdgeBySize(edges=interface_edge, size=0.5, deviationFactor=0.1, minSizeFactor=0.1, constraint=FINER)
 
     left_edge = p.edges.findAt(((-Length/2, -Height/4, 0.0), ))
     right_edge = p.edges.findAt(((Length/2, -Height/4, 0.0), ))
-    p.seedEdgeByBias(biasMethod=SINGLE, end1Edges=left_edge, end2Edges=right_edge, minSize=0.5/1000, maxSize=6.0/1000, constraint=FINER) # convert to meter unit divide by 1000
+    p.seedEdgeByBias(biasMethod=SINGLE, end1Edges=left_edge, end2Edges=right_edge, minSize=0.5, maxSize=6.0, constraint=FINER)
 
     bottom_edge = p.edges.findAt(((-Length/4, -Height, 0.0), ))
-    p.seedEdgeByBias(biasMethod=DOUBLE, centerEdges=bottom_edge, minSize=0.4/1000, maxSize=12.0/1000, constraint=FINER) # convert to meter unit divide by 1000
+    p.seedEdgeByBias(biasMethod=DOUBLE, centerEdges=bottom_edge, minSize=0.4, maxSize=12.0, constraint=FINER)
     p.generateMesh()
 
 
@@ -391,7 +386,7 @@ def Create_Axon_Connection(a_coeff,b_coeff,m_coeff,curve_num,ModelName,InstanceN
 
     # Generate original coordinates with the given parabola coefficients
     num = 200
-    xmax = np.abs(np.sqrt((-0.002-b_coeff)/a_coeff)) # convert to meter unit 
+    xmax = np.abs(np.sqrt((-2-b_coeff)/a_coeff))
 
     # curve_num = 1 means the primary axon tract on the middle
     # curve_num = 2 means the secondary axon tract on the right
@@ -556,8 +551,8 @@ def Compute_parabola_coeffs(num,tangent_min,tangent_max,span_min,span_max):
     # Calculate the coefficient: a and b
     for i in range(num):
         for j in range(num):
-            eq1 = 2 * sp.sqrt(x) * sp.sqrt(-0.002 - y) - tangent[i]  # convert to meter unit 
-            eq2 = sp.sqrt((-0.002 - y) / x) - span_half[j]  # convert to meter unit 
+            eq1 = 2 * sp.sqrt(x) * sp.sqrt(-2 - y) - tangent[i]
+            eq2 = sp.sqrt((-2 - y) / x) - span_half[j]
             sol = sp.solve((eq1, eq2), (x, y))
 
             a_array[j,i] =  np.array(sol)[0,0]
@@ -622,14 +617,17 @@ def GetKeywordPosition(blockPrefix,ModelName):
     """
 
     m = mdb.models[ModelName]
-    m.keywordBlock.synchVersions() 
+    m.keywordBlock.synchVersions()
     pos = 0
     positions = []
+
     for block in m.keywordBlock.sieBlocks:
-        if string.lower(block[0:len(blockPrefix)])==string.lower(blockPrefix):
+        if block[0:len(blockPrefix)].lower() == blockPrefix.lower():
             positions.append(pos)
-        pos=pos+1
+        pos += 1
+
     return positions
+
 
 
 def Modify_input(ModelName):
@@ -671,7 +669,7 @@ def Modify_input_for_initialize_growth_variable(ModelName):
     Parameters
     ---------- 
     ModelName : string
-        name of the model to be modified
+        determines what model should be modified
 
     """
 
@@ -700,14 +698,14 @@ def Create_Job(ModelName, JobName, USERSUB):
         explicitPrecision=SINGLE, nodalOutputPrecision=SINGLE, echoPrint=OFF, 
         modelPrint=OFF, contactPrint=OFF, historyPrint=OFF, 
         userSubroutine=USERSUB, scratch='', 
-        resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=8, 
-        numDomains=8, numGPUs=0)
+        resultsFormat=ODB, multiprocessingMode=DEFAULT, numCpus=4, 
+        numDomains=4, numGPUs=1)
     mdb.jobs[JobName].writeInput(consistencyChecking=OFF)
     try: 
         mdb.jobs[JobName].submit(consistencyChecking=OFF)
         mdb.jobs[JobName].waitForCompletion()
     except: 
-        print("Job %s crashed" % JobName)
+        print ("Job %s crashed" % JobName)
 
 
 def Post_processing_odbs(ODB_Name,NodesetName,Step,Variable):
