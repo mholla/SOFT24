@@ -10,19 +10,18 @@ if __name__ == '__main__':
 
     # ======================================================
     # dimensions of the model (mm-N-MPa unit system)
-    Length = 0.080 * 1000.0           # 80.0 mm
-    Height = 0.040 * 1000.0           # 40.0 mm
-    Cortex_thickness = 0.002 * 1000.0 # 2.0 mm
+    Length = 80.0 #mm
+    Height = 40.0 #mm
+    Cortex_thickness = 2.0 #mm
     Dimensions = [Length, Height, Cortex_thickness]
 
     # ======================================================
     # material properties (mm-N-MPa unit system)
-    # mu_cortex = 100 Pa = 100e-6 MPa
-    mu_cortex = 100.0 * 1e-6   # MPa
-    lame_cortex = 9.3 * mu_cortex  # MPa
+    mu_cortex = 100.0e-6 # MPa
+    lame_cortex = 9.3 * mu_cortex # MPa
     stiffness_ratio = 3
     mu_subcortex = stiffness_ratio * mu_cortex  # MPa
-    lame_subcortex = 9.3 * mu_subcortex  # MPa
+    lame_subcortex = 9.3 * mu_subcortex # MPa
     growth_rate = 0.05
     Materials = [mu_cortex, lame_cortex, mu_subcortex, lame_subcortex, growth_rate]
 
@@ -43,23 +42,23 @@ if __name__ == '__main__':
     num = 10
     tangent_min = 0.5
     tangent_max = 5
-    span_min = 0.016 * 1000.0  # 16.0 mm
-    span_max = 0.025 * 1000.0  # 25.0 mm
+    span_min = 16.0 #mm
+    span_max = 25.0 #mm
     [a_coeffs_array, b_coeffs_array] = Compute_parabola_coeffs(num, tangent_min, tangent_max, span_min, span_max)
-    m_coeff = 0  # mm
+    m_coeff = 0  #mm
 
     # only primary axon tract
     curve_num = 1
 
     # axon tract effective stiffness per unit depth
-    # K_eff = 150 N/m^2 (SI) = 150e-6 MPa (mm-N-MPa)
-    Axon_tract_stiffness = 150 * 1e-6  # MPa
+    # K_eff = 150 N/m^2 = 150e-6 MPa (mm-N-MPa)
+    Axon_tract_stiffness = 150e-6  # MPa
 
     # influence radius
-    InfluenceRadius = 0.001 * 1000.0  # 1.0 mm
+    InfluenceRadius = 1.0 #mm
 
     # parameters that control the segments
-    Geometric_length = 0.00013 * 1000.0  # 0.13 mm
+    Geometric_length = 0.13 #mm
     Stretch_ratio = 2
     Axon_tract_property = [Geometric_length, Stretch_ratio]
 
@@ -82,7 +81,7 @@ if __name__ == '__main__':
             # Special case: axon tract close to bottom where biased mesh is sparse
             # Increase influence radius for coupling (does not affect folding morphology)
             if ((i == 9) and (j == 9)):
-                InfluenceRadius = 0.0015 * 1000.0  # 1.5 mm
+                InfluenceRadius = 1.5 #mm
 
             Create_Bilayered_Rectangle(ModelName, PartName, Dimensions)
             Create_Material(ModelName, Materials)
