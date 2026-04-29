@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 from PIL import Image
 from io import BytesIO
+import numpy as np
 
 mpl.rcParams.update(mpl.rcParamsDefault)
 plt.rcParams["font.family"] = "Times New Roman"
@@ -32,11 +33,22 @@ if __name__ == '__main__':
     eps_theory = data['strain'].tolist()
 
     plt.plot(betas_theory, eps_theory, color=color_0, linestyle="-")
+    
+    # read in buckling times
+    buckling_times = np.load("buckling_times.npy", allow_pickle=True).item()
 
     betas = [3, 6, 9, 12, 15, 18, 21, 24, 27, 30]
-    eps_10 = [0.0833,0.0556,0.0455,0.0400,0.0361,0.0338,0.0316,0.0304,0.0293,0.0287]
-    eps_150 = [0.0755,0.0498,0.0383,0.0316,0.0270,0.0235,0.0218,0.0200,0.0182,0.0165]
-    eps_300 = [0.0695,0.0433,0.0333,0.0253,0.0218,0.0176,0.0165,0.0135,0.0129,0.0123]
+    dot_theta_g = 0.05 
+    
+    # calculate theta_g(t) = 1 + dot_theta_g * t
+    theta_g_10 = 1.0 + dot_theta_g * buckling_times["t_10"]
+    theta_g_150 = 1.0 + dot_theta_g * buckling_times["t_150"]
+    theta_g_300 = 1.0 + dot_theta_g * buckling_times["t_300"]
+
+    # calculate critical strain epsilon = 1 - 1/theta_g
+    eps_10 =  1.0 - (1.0 / theta_g_10)
+    eps_150 = 1.0 - (1.0 / theta_g_150)
+    eps_300 = 1.0 - (1.0 / theta_g_300)
 
     plt.plot(betas, eps_10, color=color_10, marker='o', linestyle='')
     plt.plot(betas, eps_150, color=color_150, marker='o', linestyle='')
