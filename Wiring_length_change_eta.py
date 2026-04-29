@@ -10,9 +10,9 @@ if __name__ == '__main__':
 
     # ======================================================
     # dimensions of the model (mm-N-MPa unit system)
-    Length = 0.080 * 1000.0           # 80.0 mm
-    Height = 0.040 * 1000.0           # 40.0 mm
-    Cortex_thickness = 0.002 * 1000.0 # 2.0 mm
+    Length = 80.0                     # 80.0 mm
+    Height = 40.0                     # 40.0 mm
+    Cortex_thickness = 2.0            # 2.0 mm
     Dimensions = [Length, Height, Cortex_thickness]
 
     # ======================================================
@@ -43,9 +43,9 @@ if __name__ == '__main__':
 
     # ======================================================
     # axon tract parabola shape parameters
-    a_coeff = 1./30.*1000 / 1000.0  # 0.0333 1/mm
-    b_coeff = -7./1000 * 1000.0     # -7.0 mm
-    m_coeff = 0                      # 0 mm
+    a_coeff = 1./30.                  # 0.0333 1/mm
+    b_coeff = -7.0                    # -7.0 mm
+    m_coeff = 0.0                     # 0.0 mm (center)
 
     # axon tract numbers
     curve_num1 = 1
@@ -53,9 +53,9 @@ if __name__ == '__main__':
     curve_num3 = 3
 
     # parameters that control the segments
-    Geometric_length = 0.00013 * 1000.0  # 0.13 mm
+    Geometric_length = 0.13           # 0.13 mm
     Stretch_ratio = 2
-    InfluenceRadius = 0.001 * 1000.0     # 1.0 mm
+    InfluenceRadius = 1.0             # 1.0 mm
     Axon_tract_property = [Geometric_length, Stretch_ratio]
 
     # ======================================================

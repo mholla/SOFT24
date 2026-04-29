@@ -10,9 +10,9 @@ if __name__ == '__main__':
 
     # ======================================================
     # dimensions of the model (mm-N-MPa unit system)
-    Length = 0.080 * 1000.0           # 80.0 mm
-    Height = 0.040 * 1000.0           # 40.0 mm
-    Cortex_thickness = 0.002 * 1000.0 # 2.0 mm
+    Length = 80.0                     # 80.0 mm
+    Height = 40.0                     # 40.0 mm
+    Cortex_thickness = 2.0            # 2.0 mm
     Dimensions = [Length, Height, Cortex_thickness]
 
     # ======================================================
@@ -42,29 +42,29 @@ if __name__ == '__main__':
 
     # ======================================================
     # axon tract parabola shape parameters
-    a_coeff = (1./30.*1000) / 1000.0  # 0.0333 1/mm
-    b_coeff = -0.007 * 1000.0         # -7.0 mm
-    m_coeff = 0.008 * 1000.0          # 8.0 mm (shifted off-center)
+    a_coeff = 1./30.                  # 0.0333 1/mm
+    b_coeff = -7.0                    # -7.0 mm
+    m_coeff = 8.0                     # 8.0 mm (shifted off-center)
 
     # only primary axon tract
     curve_num = 1
 
     # parameters that control the segments
-    Geometric_length = 0.00013 * 1000.0  # 0.13 mm
+    Geometric_length = 0.13           # 0.13 mm
     Stretch_ratio = 2
     Axon_tract_property = [Geometric_length, Stretch_ratio]
 
     # influence radius
-    InfluenceRadius = 0.001 * 1000.0  # 1.0 mm
+    InfluenceRadius = 1.0             # 1.0 mm
 
     # ======================================================
     # axon tract effective stiffness per unit depth
     # K_eff in N/m^2 (SI), scaled by 1e-6 for mm-N-MPa system
     Stiffness_range_SI = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]  # N/m^2
-    Stiffness_range = [k * 1e-6 for k in Stiffness_range_SI]         # MPa
+    Stiffness_range = [k * 1e-6 for k in Stiffness_range_SI]        # MPa
 
     # ======================================================
-    # thickness perturbation parameters
+    # thickness perturbation parameterss
     Waves = 20
     # Perturbation as fraction of cortex thickness (unitless)
     Perturbation_range = [0.0250, 0.0275, 0.0300, 0.0325, 0.0350,
