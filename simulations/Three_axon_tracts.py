@@ -26,8 +26,8 @@ if __name__ == '__main__':
     mu_subcortex = 100.0e-6 # MPa
     lame_subcortex = 9.3 * mu_subcortex # MPa
     stiffness_ratio = 3
-    mu_cortex = stiffness_ratio * mu_cortex  # MPa
-    lame_cortex = 9.3 * mu_subcortex # MPa
+    mu_cortex = stiffness_ratio * mu_subcortex  # MPa
+    lame_cortex = 9.3 * mu_cortex # MPa
     growth_rate = 0.05
     Materials = [mu_subcortex, lame_subcortex, mu_cortex, lame_cortex, growth_rate]
 
