@@ -114,12 +114,12 @@ def Create_Material(ModelName,Materials):
     growth_rate = Materials[4]
 
     # Cortex (gray matter) shearmodulus_subcortex, lameconstant_subcortex, shearmodulus_cortex, lameconstant_cortex, Gctx
-    mdb.models[ModelName].Material(name='CORTEX',description='*****************************************************************\n  Specification Of Material Properties\n*****************************************************************\n\n\nCOMMENTS FROM *USER MATERIAL\n============================\n\n*      shearmodulus of cortex = props(1)\n*      lame constant of cortex = props(2)\n*      shearmodulus of subcortex  = props(3)\n*      lame constant of subcortex  = props(4)\n*      growth rate  = props(5)')
+    mdb.models[ModelName].Material(name='CORTEX',description='*****************************************************************\n  Specification Of Material Properties\n*****************************************************************\n\n\nCOMMENTS FROM *USER MATERIAL\n============================\n\n*      shearmodulus of subcortex = props(1)\n*      lame constant of subcortex = props(2)\n*      shearmodulus of cortex  = props(3)\n*      lame constant of cortex  = props(4)\n*      growth rate  = props(5)')
     mdb.models[ModelName].materials['CORTEX'].UserMaterial(mechanicalConstants=(mu_subcortex, lame_subcortex, mu_cortex, lame_cortex, growth_rate))
     mdb.models[ModelName].materials['CORTEX'].Depvar(n=1)
 
     # Subcortex (white matter) shearmodulus_subcortex, lameconstant_subcortex, shearmodulus_cortex, lameconstant_cortex, Gctx
-    mdb.models[ModelName].Material(name='SUBCORTEX',description='*****************************************************************\n  Specification Of Material Properties\n*****************************************************************\n\n\nCOMMENTS FROM *USER MATERIAL\n============================\n\n*      shearmodulus of cortex = props(1)\n*      lame constant of cortex = props(2)\n*      shearmodulus of subcortex  = props(3)\n*      lame constant of subcortex  = props(4)\n*      growth rate  = props(5)')
+    mdb.models[ModelName].Material(name='SUBCORTEX',description='*****************************************************************\n  Specification Of Material Properties\n*****************************************************************\n\n\nCOMMENTS FROM *USER MATERIAL\n============================\n\n*      shearmodulus of subcortex = props(1)\n*      lame constant of subcortex = props(2)\n*      shearmodulus of cortex  = props(3)\n*      lame constant of cortex  = props(4)\n*      growth rate  = props(5)')
     mdb.models[ModelName].materials['SUBCORTEX'].UserMaterial(mechanicalConstants=(mu_subcortex, lame_subcortex, mu_cortex, lame_cortex, growth_rate))
     mdb.models[ModelName].materials['SUBCORTEX'].Depvar(n=1)
 
