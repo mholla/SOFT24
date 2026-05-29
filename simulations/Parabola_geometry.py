@@ -1,3 +1,8 @@
+# author: Xincheng Wang
+# contributors: Shuolun Wang 
+# unit system: mm-N-MPa unit system
+# dimension: plane strain
+
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 import Python_subroutine_axon_tension
@@ -9,14 +14,14 @@ execfile("Python_subroutine_axon_tension.py")
 if __name__ == '__main__':
 
     # ======================================================
-    # dimensions of the model (mm-N-MPa unit system)
+    # dimensions of the model 
     Length = 80.0 #mm
     Height = 40.0 #mm
     Cortex_thickness = 2.0 #mm
     Dimensions = [Length, Height, Cortex_thickness]
 
     # ======================================================
-    # material properties (mm-N-MPa unit system)
+    # material properties 
     mu_cortex = 100.0e-6 # MPa
     lame_cortex = 9.3 * mu_cortex # MPa
     stiffness_ratio = 3
@@ -51,16 +56,16 @@ if __name__ == '__main__':
     curve_num = 1
 
     # axon tract effective stiffness per unit depth
-    # K_eff = 150 N/m^2 = 150e-6 MPa (mm-N-MPa)
+    # K_eff = 150 N/m^2 = 150e-6 MPa 
     Axon_tract_stiffness = 150e-6  # MPa
-
-    # influence radius
-    InfluenceRadius = 1.0 #mm
 
     # parameters that control the segments
     Geometric_length = 0.13 #mm
     Stretch_ratio = 2
     Axon_tract_property = [Geometric_length, Stretch_ratio]
+
+    # influence radius
+    InfluenceRadius = 1.0 #mm
 
     # ======================================================
     # naming of model parts
@@ -86,7 +91,7 @@ if __name__ == '__main__':
             Create_Bilayered_Rectangle(ModelName, PartName, Dimensions)
             Create_Material(ModelName, Materials)
             Create_Section(ModelName, PartName, Dimensions)
-            Create_Assembly(ModelName, InstanceName)
+            Create_Assembly(ModelName, PartName, InstanceName)
             Create_Sets(ModelName, InstanceName, Dimensions)
             Create_Step(ModelName, Step, Steppara)
             Create_Contact(ModelName, Step)
@@ -114,4 +119,4 @@ if __name__ == '__main__':
 
     # ==============================================================
     # write data to csv for plotting
-    np.savetxt("psi_array_geometry.csv", psi_array, delimiter=",")
+    np.savetxt("../results/psi_array_geometry.csv", psi_array, delimiter=",")

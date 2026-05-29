@@ -1,3 +1,8 @@
+# author: Xincheng Wang
+# contributors: Shuolun Wang 
+# unit system: mm-N-MPa unit system
+# dimension: plane strain
+
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 import Python_subroutine_axon_tension
@@ -9,20 +14,20 @@ execfile("Python_subroutine_axon_tension.py")
 if __name__ == '__main__':
 
     # ======================================================
-    # dimensions of the model (mm-N-MPa unit system)
-    Length = 80.0                     # 80.0 mm
-    Height = 40.0                     # 40.0 mm
-    Cortex_thickness = 2.0            # 2.0 mm
+    # dimensions of the model 
+    Length = 80.0 #mm
+    Height = 40.0 #mm
+    Cortex_thickness = 2.0 #mm
     Dimensions = [Length, Height, Cortex_thickness]
 
     # ======================================================
-    # material properties (mm-N-MPa unit system)
+    # material properties 
     # Note: beta = 5 here (increased from 3 to amplify wiring length change)
-    mu_cortex = 100.0 * 1e-6       # MPa
-    lame_cortex = 9.3 * mu_cortex  # MPa
+    mu_cortex = 100.0e-6 # MPa
+    lame_cortex = 9.3 * mu_cortex # MPa
     stiffness_ratio = 5
     mu_subcortex = stiffness_ratio * mu_cortex  # MPa
-    lame_subcortex = 9.3 * mu_subcortex         # MPa
+    lame_subcortex = 9.3 * mu_subcortex # MPa
     growth_rate = 0.05
     Materials = [mu_cortex, lame_cortex, mu_subcortex, lame_subcortex, growth_rate]
 
@@ -43,20 +48,22 @@ if __name__ == '__main__':
 
     # ======================================================
     # axon tract parabola shape parameters
-    a_coeff = 1./30.                  # 0.0333 1/mm
-    b_coeff = -7.0                    # -7.0 mm
-    m_coeff = 0.0                     # 0.0 mm (center)
+    a_coeff = 1./30. #1/mm
+    b_coeff = -7.0 #mm
+    m_coeff = 0.0 #mm (center)
 
     # axon tract numbers
-    curve_num1 = 1
-    curve_num2 = 2
-    curve_num3 = 3
+    curve_num1 = 1 # primary (center)
+    curve_num2 = 2 # secondary (right)
+    curve_num3 = 3 # secondary (left)
 
     # parameters that control the segments
-    Geometric_length = 0.13           # 0.13 mm
+    Geometric_length = 0.13 #mm
     Stretch_ratio = 2
-    InfluenceRadius = 1.0             # 1.0 mm
     Axon_tract_property = [Geometric_length, Stretch_ratio]
+
+    # influence radius
+    InfluenceRadius = 1.0 #mm
 
     # ======================================================
     # axon tract effective stiffness per unit depth
@@ -96,7 +103,7 @@ if __name__ == '__main__':
         Create_Bilayered_Rectangle(ModelName, PartName, Dimensions)
         Create_Material(ModelName, Materials)
         Create_Section(ModelName, PartName, Dimensions)
-        Create_Assembly(ModelName, InstanceName)
+        Create_Assembly(ModelName, PartName, InstanceName)
         Create_Sets(ModelName, InstanceName, Dimensions)
         Create_Step(ModelName, Step, Steppara)
         Create_Contact(ModelName, Step)
@@ -119,9 +126,9 @@ if __name__ == '__main__':
 
         # ==============================================================
         # save wiring length data
-        primary_wiring_length_name = JobName + '-primary.npy'
-        secondary_wiring_length_name = JobName + '-secondary.npy'
-        total_wiring_length_name = JobName + '-total.npy'
+        primary_wiring_length_name = '../results/' + JobName + '-primary.npy'
+        secondary_wiring_length_name = '../results/' + JobName + '-secondary.npy'
+        total_wiring_length_name = '../results/' + JobName + '-total.npy'
 
         with open(primary_wiring_length_name, 'wb') as f:
             np.save(f, length_t_primary)

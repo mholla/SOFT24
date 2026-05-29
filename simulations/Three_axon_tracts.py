@@ -1,6 +1,11 @@
+# author: Xincheng Wang
+# contributors: Shuolun Wang 
+# unit system: mm-N-MPa unit system
+# dimension: plane strain
+
 # -*- coding: utf-8 -*-
 from __future__ import print_function
-import Python_subroutine_axon_tension_old_lessstable
+import Python_subroutine_axon_tension
 import numpy as np
 
 # preload all subroutines to the local python environment
@@ -9,22 +14,20 @@ execfile("Python_subroutine_axon_tension.py")
 if __name__ == '__main__':
 
     # ======================================================
-    # dimensions of the model (mm-N-MPa unit system)
-    Length = 80.0                     # 80.0 mm
-    Height = 40.0                     # 40.0 mm
-    Cortex_thickness = 2.0            # 2.0 mm
+    # dimensions of the model 
+    Length = 80.0 #mm
+    Height = 40.0 #mm
+    Cortex_thickness = 2.0 #mm
     Dimensions = [Length, Height, Cortex_thickness]
 
     # ======================================================
-    # material properties (mm-N-MPa unit system)
+    # material properties 
     # mu_cortex = 100 Pa = 100e-6 MPa
-    mu_cortex = 100.0 * 1e-6       # MPa
-    lame_cortex = 9.3 * mu_cortex  # MPa
-
+    mu_cortex = 100.0e-6 # MPa
+    lame_cortex = 9.3 * mu_cortex # MPa
     stiffness_ratio = 3
     mu_subcortex = stiffness_ratio * mu_cortex  # MPa
-    lame_subcortex = 9.3 * mu_subcortex         # MPa
-
+    lame_subcortex = 9.3 * mu_subcortex # MPa
     growth_rate = 0.05
     Materials = [mu_cortex, lame_cortex, mu_subcortex, lame_subcortex, growth_rate]
 
@@ -40,28 +43,24 @@ if __name__ == '__main__':
     Incrementsize = 0.025         # Initial time increment
     Steppara = [Totaltime, Maxincnum, Defaultstabilization, Defaultdampingratio, Mininc, Incrementsize]
 
-
     # ======================================================
     # axon tract parabola shape parameters
-    a_coeff = 1./30.                  # 0.0333 1/mm
-    b_coeff = -7.0                    # -7.0 mm
-    m_coeff = 0.0                     # 0.0 mm (center)
+    a_coeff = 1./30. #1/mm
+    b_coeff = -7.0 #mm
+    m_coeff = 0.0 #mm (center)
 
     # axon tract numbers
-    # curve_num = 1: primary (center)
-    # curve_num = 2: secondary (right)
-    # curve_num = 3: secondary (left)
-    curve_num1 = 1
-    curve_num2 = 2
-    curve_num3 = 3
+    curve_num1 = 1 # primary (center)
+    curve_num2 = 2 # secondary (right)
+    curve_num3 = 3 # secondary (left)
 
     # parameters that control the segments
-    Geometric_length = 0.13           # 0.13 mm
+    Geometric_length = 0.13 #mm
     Stretch_ratio = 2
     Axon_tract_property = [Geometric_length, Stretch_ratio]
 
     # influence radius
-    InfluenceRadius = 1.0             # 1.0 mm
+    InfluenceRadius = 1.0 #mm
 
     # ======================================================
     # axon tract effective stiffness per unit depth
@@ -91,7 +90,7 @@ if __name__ == '__main__':
             Create_Bilayered_Rectangle(ModelName, PartName, Dimensions)
             Create_Material(ModelName, Materials)
             Create_Section(ModelName, PartName, Dimensions)
-            Create_Assembly(ModelName, InstanceName)
+            Create_Assembly(ModelName, PartName, InstanceName)
             Create_Sets(ModelName, InstanceName, Dimensions)
             Create_Step(ModelName, Step, Steppara)
             Create_Contact(ModelName, Step)
@@ -127,4 +126,4 @@ if __name__ == '__main__':
 
     # ==============================================================
     # write data to csv for plotting
-    np.savetxt("psi_array_three_curves.csv", psi_array, delimiter=",")
+    np.savetxt("../results/psi_array_three_curves.csv", psi_array, delimiter=",")
