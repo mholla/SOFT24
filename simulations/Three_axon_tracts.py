@@ -23,13 +23,13 @@ if __name__ == '__main__':
     # ======================================================
     # material properties 
     # mu_cortex = 100 Pa = 100e-6 MPa
-    mu_cortex = 100.0e-6 # MPa
-    lame_cortex = 9.3 * mu_cortex # MPa
+    mu_subcortex = 100.0e-6 # MPa
+    lame_subcortex = 9.3 * mu_cortex # MPa
     stiffness_ratio = 3
-    mu_subcortex = stiffness_ratio * mu_cortex  # MPa
-    lame_subcortex = 9.3 * mu_subcortex # MPa
+    mu_cortex = stiffness_ratio * mu_subcortex  # MPa
+    lame_cortex = 9.3 * mu_subcortex # MPa
     growth_rate = 0.05
-    Materials = [mu_cortex, lame_cortex, mu_subcortex, lame_subcortex, growth_rate]
+    Materials = [mu_subcortex, lame_subcortex, mu_cortex, lame_cortex, growth_rate]
 
     # ======================================================
     # step timing parameters, increased increment limits and reduced stabilization 

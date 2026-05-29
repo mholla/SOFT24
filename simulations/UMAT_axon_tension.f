@@ -9,13 +9,13 @@
 ! 
 !     Material Properties Vector
 !     --------------------------------------------------------------
+!      !!!!Subcortex!!! 
+!      mu_s      = props(1) shear modulus for subcortex
+!      lambda_s  = props(2) lame constant for subcortex
 !      !!!!!Cortex!!!! 
 !      mu_c      = props(3) shear modulus for cortex
 !      lambda_c  = props(4) lame constant for cortex
 !      Gctx      = props(5) rate constant for cortex growth 
-!      !!!!Subcortex!!! 
-!      mu_s      = props(1) shear modulus for subcortex
-!      lambda_s  = props(2) lame constant for subcortex
 ***********************************************************************
 ***********************************************************************
       !--------------------------------------------------------
@@ -47,8 +47,6 @@
      + props(nprops),coords(3),drot(3,3),dfgrd0(3,3),dfgrd1(3,3)
 
       character*80 cmname
-      character*256 CORTEX,SUBCORTEX
-
 
       !--------------------------------------------------------
       ! call particular user material to perform the analysis 
