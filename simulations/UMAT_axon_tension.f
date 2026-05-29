@@ -27,7 +27,7 @@
       dimension statev(nstatv)
       
       ! growth_variable
-      statev(1)=one    
+      statev(1)=1.d0    
           
       return
       end
@@ -87,18 +87,16 @@
       character*80 cmname
       integer i,j,k,l
 
-      real*8 Iden(3,3),F_t(3,3),F_tau(3,3),T_tau(3,3)
-      real*8 Finv(3,3),Fginv(3,3),C_tau(3,3)
-      real*8 Be_tau(3,3),B_tau(3,3),Fg_tau(3,3),Fe_tau(3,3),Je,Jg,detF
-      real*8 lamg_t,lamg_tau,jac(3,3,3,3),mu_s,lambda_s,Ce(3,3,3,3),Cs(3,3,3,3)
+      real*8 Iden(3,3),F_tau(3,3),T_tau(3,3)
+      real*8 Be_tau(3,3),B_tau(3,3),Fg_tau(3,3),Je,Jg,detF
+      real*8 lamg_tau,jac(3,3,3,3),mu_s,lambda_s,Ce(3,3,3,3),Cs(3,3,3,3)
 
 
       ! Parameters
       real*8 zero,one,two,half
       parameter(zero=0.d0,one=1.d0,two=2.d0,half=0.5d0)
 
-      ! Obtain old and new deformation gradients
-      F_t = dfgrd0
+      ! Obtain new deformation gradients
       F_tau = dfgrd1
 
       ! Identity matrix
@@ -106,12 +104,6 @@
 
       ! Compute the relative volume change
       call mdet(F_tau,detF)
-
-      ! Compute the inverse of the deformation gradient
-      call m3inv(F_tau,Finv)
-
-      ! Compute the right Cauchy Green tensor 
-      C_tau = matmul(transpose(F_tau),F_tau)
 
       ! Obtain material properties 
       mu_s        = props(1)
@@ -127,8 +119,6 @@
  
       call mdet(Fg_tau,Jg)
       Je = detF/Jg
-
-      call m3inv(Fg_tau,Fginv)     
 
       ! Compute Cauchy stress 
       T_tau = ((lambda_s*dlog(Je) - mu_s)*Iden  + mu_s*Be_tau)/Je
@@ -222,12 +212,11 @@
 
       integer i,j,k,l
 
-      real*8 Iden(3,3),F_t(3,3),F_tau(3,3),T_tau(3,3)
-      real*8 Finv(3,3),B_tau(3,3)
-      real*8 lambda_c,mu_c,Be_tau(3,3),Fg_tau(3,3),Fe_tau(3,3),Je
+      real*8 Iden(3,3),F_tau(3,3),T_tau(3,3),detF
+      real*8 lambda_c,mu_c,Be_tau(3,3),Fg_tau(3,3),Je
       real*8 thetag_tau,thetag_t
-      real*8 dtime,Jg,C_tau(3,3)
-      real*8 Ce(3,3,3,3),Cg(3,3,3,3),Cs(3,3,3,3)
+      real*8 dtime,Jg
+      real*8 Ce(3,3,3,3),Cs(3,3,3,3)
       real*8 jac(3,3,3,3),Gctx
       real*8 Fg_inv_tau(3,3),Ce_tau(3,3),TrCe,sse
 
@@ -235,8 +224,7 @@
       real*8 zero,one,two,half,three
       parameter(zero=0.d0,one=1.d0,two=2.d0,half=0.5d0,three=3.d0)
 
-      ! Obtain old and new deformation gradients
-      F_t = dfgrd0
+      ! Obtain new deformation gradients
       F_tau = dfgrd1
 
       ! Identity matrix
@@ -244,12 +232,6 @@
 
       ! Compute the relative volume change
       call mdet(F_tau,detF)
-
-      ! Compute the inverse of the deformation gradient
-      call m3inv(F_tau,Finv)
-
-      ! Compute the right Cauchy Green tensor 
-      C_tau = matmul(transpose(F_tau),F_tau)
 
       ! Obtain material properties 
       mu_c      = props(3)
