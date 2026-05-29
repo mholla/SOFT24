@@ -14,8 +14,8 @@
 !      lambda_c  = props(4) lame constant for cortex
 !      Gctx      = props(5) rate constant for cortex growth 
 !      !!!!Subcortex!!! 
-!      mu_s        = props(1) shear modulus for subcortex
-!      lambda_s    = props(2) lame constant for subcortex
+!      mu_s      = props(1) shear modulus for subcortex
+!      lambda_s  = props(2) lame constant for subcortex
 ***********************************************************************
 ***********************************************************************
       !--------------------------------------------------------
@@ -27,7 +27,7 @@
       dimension statev(nstatv)
       
       ! growth_variable
-      statev(1)=1.0d0    
+      statev(1)=one    
           
       return
       end
@@ -96,9 +96,8 @@
 
 
       ! Parameters
-      real*8 zero,one,two,half,three,third,nine
-      parameter(zero=0.d0,one=1.d0,two=2.d0,half=0.5d0,three=3.d0,
-     +     third=1.d0/3.d0,nine=9.d0)
+      real*8 zero,one,two,half
+      parameter(zero=0.d0,one=1.d0,two=2.d0,half=0.5d0)
 
       ! Obtain old and new deformation gradients
       F_t = dfgrd0
@@ -121,7 +120,7 @@
       lambda_s    = props(2) 
 
       ! Subcortex does not grow
-      lamg_tau = 1.0
+      lamg_tau = one
 
       ! Update  kinematics 
       Fg_tau  = Iden
@@ -132,7 +131,6 @@
       Je = detF/Jg
 
       call m3inv(Fg_tau,Fginv)     
-      call m3inv(C_tau,Cinv)
 
       ! Compute Cauchy stress 
       T_tau = ((lambda_s*dlog(Je) - mu_s)*Iden  + mu_s*Be_tau)/Je
@@ -144,8 +142,8 @@
             do k=1,3
                do l=1,3            
                   Ce(i,j,k,l) =  
-     +             +(1.0/Je)*lambda_s*Iden(i,j)*Iden(k,l)
-     +             +(1.0/Je)*(mu_s - lambda_s*dlog(Je))*
+     +             +(one/Je)*lambda_s*Iden(i,j)*Iden(k,l)
+     +             +(one/Je)*(mu_s - lambda_s*dlog(Je))*
      +             (Iden(i,k)*Iden(j,l) + Iden(j,k)*Iden(i,l))
              enddo
            enddo
@@ -159,7 +157,7 @@
             do k=1,3
                do l=1,3            
                   Cs(i,j,k,l) =  
-     +             + 0.5*(
+     +             + half*(
      +             + Iden(i,k)*T_tau(j,l)
      +             + Iden(i,l)*T_tau(j,k)
      +             + Iden(j,k)*T_tau(i,l)
@@ -236,9 +234,8 @@
       real*8 Fg_inv_tau(3,3),Ce_tau(3,3),TrCe,sse
 
       ! Parameters
-      real*8 zero,one,two,half,three,third,nine
-      parameter(zero=0.d0,one=1.d0,two=2.d0,half=0.5d0,three=3.d0,
-     +     third=1.d0/3.d0,nine=9.d0)
+      real*8 zero,one,two,half,three
+      parameter(zero=0.d0,one=1.d0,two=2.d0,half=0.5d0,three=3.d0)
 
       ! Obtain old and new deformation gradients
       F_t = dfgrd0
@@ -292,8 +289,8 @@
             do k=1,3
                do l=1,3            
                   Ce(i,j,k,l) =  
-     +             +(1.0/Je)*lambda_c*Iden(i,j)*Iden(k,l)
-     +             +(1.0/Je)*(mu_c - lambda_c*dlog(Je))*
+     +             +(one/Je)*lambda_c*Iden(i,j)*Iden(k,l)
+     +             +(one/Je)*(mu_c - lambda_c*dlog(Je))*
      +             (Iden(i,k)*Iden(j,l) + Iden(j,k)*Iden(i,l))
              enddo
            enddo
@@ -307,7 +304,7 @@
             do k=1,3
                do l=1,3            
                   Cs(i,j,k,l) = 
-     +             + 0.5*(
+     +             + half*(
      +             + Iden(i,k)*T_tau(j,l)
      +             + Iden(i,l)*T_tau(j,k)
      +             + Iden(j,k)*T_tau(i,l)
@@ -321,7 +318,7 @@
       jac  =  Ce + Cs
 
       ! Compute the strain energy
-      sse = (mu_c/2.0)*(TrCe-3.0-2.0*dlog(Je)) + (lambda_c)*(dlog(Je))**2.0/2.0
+      sse = (mu_c/two)*(TrCe-three-two*dlog(Je)) + (lambda_c)*(dlog(Je))**two/two
 
       ! Update state variables
       statev(1)  = thetag_tau
@@ -395,42 +392,42 @@
       ddsdde(1,3) = SpTanMod(1,1,3,3)
       ddsdde(1,4) = SpTanMod(1,1,1,2)
       ddsdde(1,5) = SpTanMod(1,1,1,3)
-      ddsdde(1,6) = SpTanmod(1,1,2,3)
+      ddsdde(1,6) = SpTanMod(1,1,2,3)
 
       ddsdde(2,1) = SpTanMod(2,2,1,1)
       ddsdde(2,2) = SpTanMod(2,2,2,2)
       ddsdde(2,3) = SpTanMod(2,2,3,3)
       ddsdde(2,4) = SpTanMod(2,2,1,2)
       ddsdde(2,5) = SpTanMod(2,2,1,3)
-      ddsdde(2,6) = SpTanmod(2,2,2,3)
+      ddsdde(2,6) = SpTanMod(2,2,2,3)
 
       ddsdde(3,1) = SpTanMod(3,3,1,1)
       ddsdde(3,2) = SpTanMod(3,3,2,2)
       ddsdde(3,3) = SpTanMod(3,3,3,3)
       ddsdde(3,4) = SpTanMod(3,3,1,2)
       ddsdde(3,5) = SpTanMod(3,3,1,3)
-      ddsdde(3,6) = SpTanmod(3,3,2,3)
+      ddsdde(3,6) = SpTanMod(3,3,2,3)
 
       ddsdde(4,1) = SpTanMod(1,2,1,1)
       ddsdde(4,2) = SpTanMod(1,2,2,2)
       ddsdde(4,3) = SpTanMod(1,2,3,3)
       ddsdde(4,4) = SpTanMod(1,2,1,2)
       ddsdde(4,5) = SpTanMod(1,2,1,3)
-      ddsdde(4,6) = SpTanmod(1,2,2,3)
+      ddsdde(4,6) = SpTanMod(1,2,2,3)
 
       ddsdde(5,1) = SpTanMod(1,3,1,1)
       ddsdde(5,2) = SpTanMod(1,3,2,2)
       ddsdde(5,3) = SpTanMod(1,3,3,3)
       ddsdde(5,4) = SpTanMod(1,3,1,2)
       ddsdde(5,5) = SpTanMod(1,3,1,3)
-      ddsdde(5,6) = SpTanmod(1,3,2,3)
+      ddsdde(5,6) = SpTanMod(1,3,2,3)
 
       ddsdde(6,1) = SpTanMod(2,3,1,1)
       ddsdde(6,2) = SpTanMod(2,3,2,2)
       ddsdde(6,3) = SpTanMod(2,3,3,3)
       ddsdde(6,4) = SpTanMod(2,3,1,2)
       ddsdde(6,5) = SpTanMod(2,3,1,3)
-      ddsdde(6,6) = SpTanmod(2,3,2,3)
+      ddsdde(6,6) = SpTanMod(2,3,2,3)
 
       end subroutine jac3D
 
@@ -448,9 +445,9 @@ C**********************************************************************
       DO 1 I=1,3
         DO 1 J=1,3
           IF (I .EQ. J) THEN
-              A(I,J) = 1.0
+              A(I,J) = ONE
             ELSE
-              A(I,J) = 0.0
+              A(I,J) = ZERO
             ENDIF
 1       CONTINUE
 
@@ -524,15 +521,15 @@ C**********************************************************************
 
       REAL*8  A(3,3), ACOFAC(3,3)
 
-      ACOFAC(1,1) = A(2,2)*A(3,3) - A(3,2)*A(2,3)
+      ACOFAC(1,1) =   A(2,2)*A(3,3) - A(3,2)*A(2,3)
       ACOFAC(1,2) = -(A(2,1)*A(3,3) - A(3,1)*A(2,3))
-      ACOFAC(1,3) = A(2,1)*A(3,2) - A(3,1)*A(2,2)
+      ACOFAC(1,3) =   A(2,1)*A(3,2) - A(3,1)*A(2,2)
       ACOFAC(2,1) = -(A(1,2)*A(3,3) - A(3,2)*A(1,3))
-      ACOFAC(2,2) = A(1,1)*A(3,3) - A(3,1)*A(1,3)
+      ACOFAC(2,2) =   A(1,1)*A(3,3) - A(3,1)*A(1,3)
       ACOFAC(2,3) = -(A(1,1)*A(3,2) - A(3,1)*A(1,2))
-      ACOFAC(3,1) = A(1,2)*A(2,3)  - A(2,2)*A(1,3)
+      ACOFAC(3,1) =   A(1,2)*A(2,3) - A(2,2)*A(1,3)
       ACOFAC(3,2) = -(A(1,1)*A(2,3) - A(2,1)*A(1,3))
-      ACOFAC(3,3) = A(1,1)*A(2,2) - A(2,1)*A(1,2)
+      ACOFAC(3,3) =   A(1,1)*A(2,2) - A(2,1)*A(1,2)
 
       RETURN
       END
