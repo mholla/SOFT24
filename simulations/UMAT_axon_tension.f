@@ -213,7 +213,7 @@
       integer i,j,k,l
 
       real*8 Iden(3,3),F_tau(3,3),T_tau(3,3),detF
-      real*8 lambda_c,mu_c,Be_tau(3,3),Fg_tau(3,3),Je
+      real*8 lambda_c,mu_c,Fe_tau(3,3),Be_tau(3,3),Fg_tau(3,3),Je
       real*8 thetag_tau,thetag_t
       real*8 dtime,Jg
       real*8 Ce(3,3,3,3),Cs(3,3,3,3)
