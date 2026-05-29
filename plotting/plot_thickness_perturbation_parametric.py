@@ -25,8 +25,8 @@ def heat_map(csv_file):
     g.tick_params(left=False, bottom=False)
     g.set_yticklabels(g.get_yticklabels(), rotation=0)
     g.set_xticklabels(g.get_xticklabels(), rotation=0)
-    g.set_xlabel("axon tract stiffness K [N/m]")
-    g.set_ylabel(r'hickness perturbation  $\xi/H_{\rm c}$ [\%]')
+    g.set_xlabel(r"axon tract stiffness $K_{\rm eff}$ [N/m^2]")
+    g.set_ylabel(r'thickness perturbation  $\xi/H_{\rm c}$ [\%]')
     plt.tight_layout()
     plt.rcParams['figure.dpi'] = 500
     plt.rcParams['savefig.dpi'] = 500
@@ -47,4 +47,4 @@ if __name__ == '__main__':
     rc('text', usetex=True)
 
 
-    heat_map("psi_array_perturbation.csv")
+    heat_map("../results/psi_array_perturbation.csv")

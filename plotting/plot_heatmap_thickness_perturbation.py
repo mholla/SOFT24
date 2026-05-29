@@ -53,4 +53,4 @@ if __name__ == '__main__':
     rc('font', **{'family': 'serif', 'serif': ['Computer Modern']})
     rc('text', usetex=True)
 
-    heat_map("psi_array_thickness_perturbation.csv")
+    heat_map("../results/psi_array_thickness_perturbation.csv")

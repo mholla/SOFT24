@@ -48,4 +48,4 @@ if __name__ == '__main__':
     rc('text', usetex=True)
 
 
-    heat_map("psi_array_geometry.csv")
+    heat_map("../results/psi_array_geometry.csv")
