@@ -7,6 +7,7 @@
 from __future__ import print_function
 import Python_subroutine_axon_tension
 import numpy as np
+import os
 
 # preload all subroutines to the local python environment
 execfile("Python_subroutine_axon_tension.py")
@@ -39,7 +40,7 @@ if __name__ == '__main__':
     Maxincnum = 100000            # Increased for better convergence handling
     Defaultstabilization = 1e-5   # Reduced dissipated energy fraction
     Defaultdampingratio = 0.01    # Reduced adaptive stabilization tolerance
-    Mininc = 0.001                # Minimum time increment
+    Mininc = 1e-5                 # Minimum time increment
     Incrementsize = 0.025         # Initial time increment
     Steppara = [Totaltime, Maxincnum, Defaultstabilization, Defaultdampingratio, Mininc, Incrementsize]
 
@@ -123,10 +124,15 @@ if __name__ == '__main__':
             total_length_t[FrameNumber] = eta * length_t_primary[FrameNumber] + 2 * length_t_secondary[FrameNumber]
 
         # ==============================================================
-        # save wiring length data
-        primary_wiring_length_name = '../results/' + JobName + '-primary.npy'
-        secondary_wiring_length_name = '../results/' + JobName + '-secondary.npy'
-        total_wiring_length_name = '../results/' + JobName + '-total.npy'
+        # ensure the output directory exists
+        outdir = "../results"
+        if not os.path.isdir(outdir):
+            os.makedirs(outdir)
+
+        # construct file paths and save wiring length data
+        primary_wiring_length_name = os.path.join(outdir, JobName + '-primary.npy')
+        secondary_wiring_length_name = os.path.join(outdir, JobName + '-secondary.npy')
+        total_wiring_length_name = os.path.join(outdir, JobName + '-total.npy')
 
         with open(primary_wiring_length_name, 'wb') as f:
             np.save(f, length_t_primary)

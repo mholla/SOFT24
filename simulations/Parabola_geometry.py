@@ -7,6 +7,7 @@
 from __future__ import print_function
 import Python_subroutine_axon_tension
 import numpy as np
+import os
 
 # preload all subroutines to the local python environment
 execfile("Python_subroutine_axon_tension.py")
@@ -38,7 +39,7 @@ if __name__ == '__main__':
     Maxincnum = 100000            # Increased for better convergence handling
     Defaultstabilization = 1e-5   # Reduced dissipated energy fraction
     Defaultdampingratio = 0.01    # Reduced adaptive stabilization tolerance
-    Mininc = 0.001                # Minimum time increment
+    Mininc = 1e-5                 # Minimum time increment
     Incrementsize = 0.025         # Initial time increment
     Steppara = [Totaltime, Maxincnum, Defaultstabilization, Defaultdampingratio, Mininc, Incrementsize]
 
@@ -119,4 +120,7 @@ if __name__ == '__main__':
 
     # ==============================================================
     # write data to csv for plotting
-    np.savetxt("../results/psi_array_geometry.csv", psi_array, delimiter=",")
+    outdir = "../results"
+    if not os.path.isdir(outdir):
+        os.makedirs(outdir)
+    np.savetxt(os.path.join(outdir, "psi_array_geometry.csv"), psi_array, delimiter=",")

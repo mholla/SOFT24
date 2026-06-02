@@ -679,8 +679,7 @@ def Modify_input_for_initialize_growth_variable(ModelName):
         determines what model should be modified
 
     """
-
-    blocks = GetKeywordPosition('*User Material, constants=5\n100., 930., 300.,2790., 0.05',ModelName)
+    blocks = GetKeywordPosition('*User Material, constants=5\n 0.0001, 0.00093, 0.0003, 0.00279, 0.05', ModelName)
     for b in reversed(blocks):
         mdb.models[ModelName].keywordBlock.insert(position=b, text= '*Initial Conditions, Type=Solution, User')
 
