@@ -1,48 +1,108 @@
-# axon_tension
-The readme document for codes to reproduce the results of the axon tension paper.
+# Axon Tension Paper Code
 
-To run the simulation, place the Fortran file ‘**UMAT_axon_tension.f**’ and the Python file ‘**Python_subroutine_axon_tension.py**’ in the same folder. 
+This repository contains the Abaqus simulation scripts, post-processing utilities, and plotting data used to reproduce the computational results for the axon tension paper. The code builds bilayered brain-tissue models with embedded axon-tract tension, evaluates geometry- and stiffness-dependent folding responses, and recreates the figures from the processed simulation data.
 
-Next, place one of the Python scripts for a specific section in the same folder.
+## Software Requirements
 
-For example, to run one of the Python scripts, open the terminal and run the following command:
+- Abaqus/CAE 2022 with a working Fortran compiler for the user material subroutine.
+- Python environment for plotting.
+- Python packages listed in `requirements.txt`.
+- A LaTeX installation is recommended because the plotting scripts use Matplotlib with `usetex=True`.
 
-**abaqus cae noGUI=Parabola_geometry.py**
+Install the plotting dependencies with:
 
-For other scripts:
+```bash
+python -m pip install -r requirements.txt
+```
 
-**abaqus cae noGUI=Thickness_perturbation.py**
+The simulation scripts should be run through Abaqus, not a standard Python interpreter, because they rely on Abaqus/CAE APIs and compile the UMAT subroutine.
 
-**abaqus cae noGUI=Three_axon_tracts.py**
+## Repository Schematic
 
-**abaqus cae noGUI=Wiring_length_change_eta.py**
+```text
+SOFT24/
+|-- README.md
+|-- requirements.txt
+|-- simulations/
+|   |-- UMAT_axon_tension.f
+|   |-- Python_subroutine_axon_tension.py
+|   |-- Parabola_geometry.py
+|   |-- Thickness_perturbation.py
+|   |-- Three_axon_tracts.py
+|   |-- Wiring_length_change_eta.py
+|   `-- Wiring_length_keep_eta.py
+|-- results/
+|   |-- data_critical-strain.csv
+|   |-- buckling_times.npy
+|   |-- psi_array_*.csv
+|   `-- Job-*-total.npy
+`-- plotting/
+    |-- plot_critical_strain.py
+    |-- plot_heatmap_*.py
+    |-- plot_*_parametric.py
+    |-- plot_wiring_length_*.py
+    `-- figure_*.png
+```
 
-**abaqus cae noGUI=Wiring_length_keep_eta.py**
+## Reproducing Simulations
 
+Run the Abaqus jobs from the `simulations/` directory so the scripts can find `UMAT_axon_tension.f` and `Python_subroutine_axon_tension.py` through their existing relative paths.
 
-To plot post-processed figures, place the data files (.csv or .npy) with the corresponding plotting script in the same folder. 
+```bash
+cd simulations
+abaqus cae noGUI=Parabola_geometry.py
+abaqus cae noGUI=Thickness_perturbation.py
+abaqus cae noGUI=Three_axon_tracts.py
+abaqus cae noGUI=Wiring_length_change_eta.py
+abaqus cae noGUI=Wiring_length_keep_eta.py
+```
 
-The pairs are listed in the table below:
-Data file  | Plotting script 
-------------- | -------------
-data_critical-strain.csv  | plot_critical_strain.py 
-psi_array_geometry.csv  | plot_geometrical_parametric.py
-psi_array_perturbation.csv | plot_thickness_perturbation_parametric.py
-psi_array_three_curves.csv | plot_three_curves_parametric.py
-Job-K1-100-K2-25-total.npy <br> Job-K1-100-K2-100-total.npy<br> Job-K1-100-K2-400-total.npy | plot_wiring_length_change_eta.py
-Job-K1-100-K2-100-total.npy <br> Job-K1-200-K2-200-total.npy<br> Job-K1-300-K2-300-total.npy | plot_wiring_length_keep_eta.py
+The scripts create Abaqus models/jobs, post-process output databases where needed, and write processed arrays to `../results/`.
 
+| Script | Purpose | Main processed output |
+| --- | --- | --- |
+| `Parabola_geometry.py` | Sweeps axon-tract parabola geometry. | `results/psi_array_geometry.csv` |
+| `Thickness_perturbation.py` | Sweeps cortical thickness perturbation and axon stiffness. | `results/psi_array_thickness_perturbation.csv` |
+| `Three_axon_tracts.py` | Sweeps primary and secondary tract stiffness for a three-tract model. | `results/psi_array_three_curves.csv` |
+| `Wiring_length_change_eta.py` | Computes total wiring length while varying stiffness ratio `eta`. | `results/Job-K1-100-K2-*-total.npy` |
+| `Wiring_length_keep_eta.py` | Computes total wiring length with `eta = 1` while varying stiffness. | `results/Job-K1-*-K2-*-total.npy` |
 
-Then open the Python terminal and run the following command:
+## Reproducing Figures
 
-**python plot_critical_strain.py** 
+Most figure scripts are designed to be run from the `plotting/` directory and read processed data from `../results/`.
 
-**python plot_geometrical_parametric.py**
+```bash
+cd plotting
+python plot_critical_strain.py
+python plot_heatmap_geometry.py
+python plot_heatmap_thickness_perturbation.py
+python plot_heatmap_three_curves.py
+python plot_thickness_perturbation_parametric.py
+python plot_three_curves_parametric.py
+```
 
-**python plot_thickness_perturbation_parametric.py**
+The wiring-length plotting scripts currently load `.npy` files from the current working directory. A direct way to run them with the committed data is:
 
-**python plot_three_curves_parametric.py**
+```bash
+cd results
+python ../plotting/plot_wiring_length_change_eta.py
+python ../plotting/plot_wiring_length_keep_eta.py
+```
 
-**python plot_wiring_length_change_eta.py**
+These commands write the generated wiring-length figures to the current directory. To save them inside `plotting/`, copy or link the required `Job-*-total.npy` files into `plotting/` before running the scripts there.
 
-**python plot_wiring_length_keep_eta.py**
+| Figure/data source | Plotting script |
+| --- | --- |
+| `results/data_critical-strain.csv`, `results/buckling_times.npy` | `plotting/plot_critical_strain.py` |
+| `results/psi_array_geometry.csv` | `plotting/plot_heatmap_geometry.py` |
+| `results/psi_array_thickness_perturbation.csv` | `plotting/plot_heatmap_thickness_perturbation.py` |
+| `results/psi_array_perturbation.csv` | `plotting/plot_thickness_perturbation_parametric.py` |
+| `results/psi_array_three_curves.csv` | `plotting/plot_heatmap_three_curves.py`, `plotting/plot_three_curves_parametric.py` |
+| `results/Job-K1-100-K2-25-total.npy`, `results/Job-K1-100-K2-100-total.npy`, `results/Job-K1-100-K2-400-total.npy` | `plotting/plot_wiring_length_change_eta.py` |
+| `results/Job-K1-100-K2-100-total.npy`, `results/Job-K1-200-K2-200-total.npy`, `results/Job-K1-300-K2-300-total.npy` | `plotting/plot_wiring_length_keep_eta.py` |
+
+## Notes
+
+- The finite-element model uses the mm-N-MPa unit system and plane strain assumptions, as noted in the simulation scripts.
+- Abaqus simulation outputs such as `.odb`, `.inp`, `.dat`, `.msg`, `.sta`, and `.log` files are generated during reproduction and are not required for plotting the committed processed results.
+- The committed `results/` arrays allow the plotting scripts to be rerun without repeating the full Abaqus simulations.
