@@ -1,3 +1,7 @@
+# author: Xincheng Wang
+# contributors: Shuolun Wang 
+# dimension: plane strain
+
 from abaqus import *
 from abaqusConstants import *
 import __main__
@@ -33,6 +37,10 @@ from scipy import interpolate
 import sympy as sp
 from odbAccess import *
 import odbAccess
+
+# these subroutines are used to create the model and run jobs for Wang et al. (2024) Soft Matter
+
+# note that mesh sizes are hard coded in Create_Mesh, and changes to these values will affect hard-coded node numbers in Create_mesh_node_sets
 
 
 def Create_Bilayered_Rectangle(ModelName, PartName, Dimensions):
@@ -95,24 +103,24 @@ def Create_Material(ModelName,Materials):
     ModelName : string
         name of the model to be modified
     Materials : list of floats
-        material parameters of the model: mu_cortex, lame_cortex), mu_subcortex, lame_subcortex, growth_rate
+        material parameters of the model: mu_subcortex, lame_subcortex, mu_cortex, lame_cortex, growth_rate
 
     """ 
 
-    mu_cortex = Materials[0]
-    lame_cortex = Materials[1]
-    mu_subcortex = Materials[2]
-    lame_subcortex = Materials[3]
+    mu_subcortex = Materials[0]
+    lame_subcortex = Materials[1]
+    mu_cortex = Materials[2]
+    lame_cortex = Materials[3]
     growth_rate = Materials[4]
 
-    # Cortex (gray matter) shearmodulus_cortex, lameconstant_cortex, shearmodulus_subcortex, lameconstant_subcortex, Gctx
-    mdb.models[ModelName].Material(name='CORTEX',description='*****************************************************************\n  Specification Of Material Properties\n*****************************************************************\n\n\nCOMMENTS FROM *USER MATERIAL\n============================\n\n*      shearmodulus of cortex = props(1)\n*      lame constant of cortex = props(2)\n*      shearmodulus of subcortex  = props(3)\n*      lame constant of subcortex  = props(4)\n*      growth rate  = props(5)')
-    mdb.models[ModelName].materials['CORTEX'].UserMaterial(mechanicalConstants=(mu_cortex, lame_cortex, mu_subcortex, lame_subcortex, growth_rate))
+    # Cortex (gray matter) shearmodulus_subcortex, lameconstant_subcortex, shearmodulus_cortex, lameconstant_cortex, Gctx
+    mdb.models[ModelName].Material(name='CORTEX',description='*****************************************************************\n  Specification Of Material Properties\n*****************************************************************\n\n\nCOMMENTS FROM *USER MATERIAL\n============================\n\n*      shearmodulus of subcortex = props(1)\n*      lame constant of subcortex = props(2)\n*      shearmodulus of cortex  = props(3)\n*      lame constant of cortex  = props(4)\n*      growth rate  = props(5)')
+    mdb.models[ModelName].materials['CORTEX'].UserMaterial(mechanicalConstants=(mu_subcortex, lame_subcortex, mu_cortex, lame_cortex, growth_rate))
     mdb.models[ModelName].materials['CORTEX'].Depvar(n=1)
 
-    # Subcortex (white matter) shearmodulus_cortex, lameconstant_cortex, shearmodulus_subcortex, lameconstant_subcortex, Gctx
-    mdb.models[ModelName].Material(name='SUBCORTEX',description='*****************************************************************\n  Specification Of Material Properties\n*****************************************************************\n\n\nCOMMENTS FROM *USER MATERIAL\n============================\n\n*      shearmodulus of cortex = props(1)\n*      lame constant of cortex = props(2)\n*      shearmodulus of subcortex  = props(3)\n*      lame constant of subcortex  = props(4)\n*      growth rate  = props(5)')
-    mdb.models[ModelName].materials['SUBCORTEX'].UserMaterial(mechanicalConstants=(mu_cortex, lame_cortex, mu_subcortex, lame_subcortex, growth_rate))
+    # Subcortex (white matter) shearmodulus_subcortex, lameconstant_subcortex, shearmodulus_cortex, lameconstant_cortex, Gctx
+    mdb.models[ModelName].Material(name='SUBCORTEX',description='*****************************************************************\n  Specification Of Material Properties\n*****************************************************************\n\n\nCOMMENTS FROM *USER MATERIAL\n============================\n\n*      shearmodulus of subcortex = props(1)\n*      lame constant of subcortex = props(2)\n*      shearmodulus of cortex  = props(3)\n*      lame constant of cortex  = props(4)\n*      growth rate  = props(5)')
+    mdb.models[ModelName].materials['SUBCORTEX'].UserMaterial(mechanicalConstants=(mu_subcortex, lame_subcortex, mu_cortex, lame_cortex, growth_rate))
     mdb.models[ModelName].materials['SUBCORTEX'].Depvar(n=1)
 
 
@@ -155,7 +163,7 @@ def Create_Section(ModelName, PartName, Dimensions):
     p.SectionAssignment(region=region, sectionName='Section-2-subcortex', offset=0.0, offsetType=MIDDLE_SURFACE, offsetField='', thicknessAssignment=FROM_SECTION)
 
 
-def Create_Assembly(ModelName,InstanceName):
+def Create_Assembly(ModelName, PartName, InstanceName):
 
     """ Create assembly
 
@@ -163,10 +171,10 @@ def Create_Assembly(ModelName,InstanceName):
     ----------
     ModelName : string
         name of the model to be modified
+    PartName : string
+        name of the part to be modified
     InstanceName : string
         name of the instance to be modified
-    Dimensions : list of floats
-        geometric parameters of the model: Length, Height, Cortex_thickness
 
     """ 
 
@@ -414,7 +422,7 @@ def Create_Axon_Connection(a_coeff,b_coeff,m_coeff,curve_num,ModelName,InstanceN
     
     # Calculate the segmentation number based on Geometric_length
     new_num = round(u.max()/Geometric_length)
-    Referenece_length = Geometric_length/Stretch_ratio
+    Reference_length = Geometric_length/Stretch_ratio
 
     # Interpolate the new x-y coordinates based on equal segmentation length
     u = np.hstack([[0], u])
@@ -431,10 +439,10 @@ def Create_Axon_Connection(a_coeff,b_coeff,m_coeff,curve_num,ModelName,InstanceN
     print(np.shape(coords_inline))
     coords_inline_list = [float(i) for i in coords_inline]
 
-    # Pre-creating ConnectorSection with axon tract Stiffness and Referenece_length
+    # Pre-creating ConnectorSection with axon tract Stiffness and Reference_length
     mdb.models[ModelName].ConnectorSection(name='ConnSect-'+str(curve_num), translationalType=AXIAL)
     axon_behavior = connectorBehavior.ConnectorElasticity(components=(1, ), table=((Axon_tract_stiffness, ), ))
-    mdb.models[ModelName].sections['ConnSect-'+str(curve_num)].setValues(behaviorOptions =(axon_behavior, ), u1ReferenceLength=Referenece_length )
+    mdb.models[ModelName].sections['ConnSect-'+str(curve_num)].setValues(behaviorOptions =(axon_behavior, ), u1ReferenceLength=Reference_length )
 
     # Select the faces and the region
     a = mdb.models[ModelName].rootAssembly
@@ -629,7 +637,6 @@ def GetKeywordPosition(blockPrefix,ModelName):
     return positions
 
 
-
 def Modify_input(ModelName):
 
     """ Modify the command line to request top surface nodal coordinates for calculating psi values
@@ -672,10 +679,10 @@ def Modify_input_for_initialize_growth_variable(ModelName):
         determines what model should be modified
 
     """
-
-    blocks = GetKeywordPosition('*User Material, constants=5\n100., 930., 300.,2790., 0.05',ModelName)
+    blocks = GetKeywordPosition('*User Material, constants=5\n 0.0001, 0.00093, 0.0003, 0.00279, 0.05', ModelName)
     for b in reversed(blocks):
         mdb.models[ModelName].keywordBlock.insert(position=b, text= '*Initial Conditions, Type=Solution, User')
+
 
 def Create_Job(ModelName, JobName, USERSUB):
 

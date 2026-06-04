@@ -28,14 +28,14 @@ if __name__ == '__main__':
     color_300 = cmap(0.8)
 
     # read in and plot data from Holland 2018
-    data = pd.read_csv("data_critical-strain.csv")
+    data = pd.read_csv("../results/data_critical-strain.csv")
     betas_theory = data['beta'].tolist()
     eps_theory = data['strain'].tolist()
 
     plt.plot(betas_theory, eps_theory, color=color_0, linestyle="-")
     
     # read in buckling times
-    buckling_times = np.load("buckling_times.npy", allow_pickle=True).item()
+    buckling_times = np.load("../results/buckling_times.npy", allow_pickle=True).item()
 
     betas = [3, 6, 9, 12, 15, 18, 21, 24, 27, 30]
     dot_theta_g = 0.05 

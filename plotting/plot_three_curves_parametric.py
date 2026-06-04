@@ -12,21 +12,21 @@ def heat_map(csv_file):
  
     # read in data and plot
     data = pd.read_csv(csv_file,header=None)
-    
-    # specify thickness perturbation and axon tract stiffness
-    data.index = [5,4.75,4.5,4.25,4,3.75,3.5,3.25,3,2.75,2.5]
-    data.columns = [10,20,30,40,50,60,70,80,90,100]
-    
+
+    # specify primary and secondary axon tracts stiffness
+    data.columns = [10,120,230,340,450,560,670,780,890,1000]
+    data.index = [1000,890,780,670,560,450,340,230,120,10]
+
     # plot heatmap, data*1000 convert to unit milimeter
     g = sns.heatmap(data*1000, cmap='Blues', square=True, linewidths=1, linecolor='white', 
-                    cbar_kws ={'label': 'mean squared displacement $\psi$ [mm]','location': 'bottom','shrink':0.51,'ticks': [0,0.5,1.0,1.5,2,2.5]} )
+                    cbar_kws ={'label': 'mean squared displacement $\psi$ [mm]','location': 'bottom','shrink':0.51,'ticks': [0.0,0.4,0.8,1.2,1.6]} )
     
     # axes
     g.tick_params(left=False, bottom=False)
     g.set_yticklabels(g.get_yticklabels(), rotation=0)
     g.set_xticklabels(g.get_xticklabels(), rotation=0)
-    g.set_xlabel("axon tract stiffness K [N/m]")
-    g.set_ylabel(r'hickness perturbation  $\xi/H_{\rm c}$ [\%]')
+    g.set_xlabel(r"secondary axon tract stiffness $K_{2, \rm eff}$ [N/m^2]")
+    g.set_ylabel(r"primary axon tract stiffness $K_{1, \rm eff}$ [N/m^2]")
     plt.tight_layout()
     plt.rcParams['figure.dpi'] = 500
     plt.rcParams['savefig.dpi'] = 500
@@ -35,11 +35,12 @@ def heat_map(csv_file):
     png1 = BytesIO()
     plt.savefig(png1, format='png')
     png2 = Image.open(png1)
-    png2.save('figure_psi_heatmap_thickness_perturbation.tiff')
+    png2.save('figure_heatmap_three_curves.tiff')
     png1.close()
     
-    plt.savefig("figure_psi_heatmap_thickness_perturbation.png")
+    plt.savefig("figure_heatmap_three_curves.png")
     plt.show()
+
 
 if __name__ == '__main__':
 
@@ -47,4 +48,4 @@ if __name__ == '__main__':
     rc('text', usetex=True)
 
 
-    heat_map("psi_array_perturbation.csv")
+    heat_map("../results/psi_array_three_curves.csv")
