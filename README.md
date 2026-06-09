@@ -1,6 +1,6 @@
 # Axon Tension Paper Code
 
-This repository contains the Abaqus simulation scripts, post-processing utilities, and plotting data used to reproduce the computational results for the axon tension paper. The code builds bilayered brain-tissue models with embedded axon-tract tension, evaluates geometry- and stiffness-dependent folding responses, and recreates the figures from the processed simulation data.
+This repository contains the Abaqus simulation scripts, post-processing utilities, and plotting data used to reproduce the computational results for ["Axonal tension contributes to consistent fold placement" (Wang et al. 2024)](https://doi.org/10.1039/D4SM00129J). The code builds bilayered brain-tissue models with embedded axon-tract tension, evaluates geometry- and stiffness-dependent folding responses, and recreates the figures from the processed simulation data.
 
 ## Software Requirements
 
